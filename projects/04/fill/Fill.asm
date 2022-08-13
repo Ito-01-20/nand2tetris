@@ -12,45 +12,54 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
-@R0
-        M=0
-        @R1
-        M=0
-(LOOP)  
+(LOOP_KBD)
+        // select color
         @KBD
         D=M
-        @COLORBLACK
-        D;JEQ
-        @R0    //color
-        M=0
-        @PAINT
-        0;JMP
-(COLORBLACK)
-        @R0    //color
-        M=-1
-        @PAINT
-        0;JMP
-(PAINT)
+        @SELECT_WHITE
+        D; JEQ
+        @0
+        D=A-1
+        @SET_COLOR
+        0; JMP
+(SELECT_WHITE)
+        @0
+        D=A
+(SET_COLOR)
+        @color
+        M=D
+
         @SCREEN
         D=A
-        @8191
-        D=D+A
-        @R1  // Address 
+        @pos
         M=D
-(FILL)
-        @R0  // color
+
+        // 32 * 256 = 8192
+        @8192
+        D=A
+        @n
+        M=D
+
+(LOOP_FILL)
+        @n
         D=M
-        @R1
+        @FILL_END
+        D; JEQ
+
+        // print color
+        @color
+        D=M
+        @pos
         A=M
         M=D
-        @R1
-        MD=M-1
-        @SCREEN
-        D=D-A
-        @FILL
-        D;JGE
-        @LOOP
-        0;JMP
-(END)
-        @END
-        0;JMP
+
+        @pos
+        M=M+1
+        @n
+        M=M-1
+
+        @LOOP_FILL
+        0; JMP
+(FILL_END)
+        @LOOP_KBD
+        0; JMP
